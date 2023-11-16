@@ -1,0 +1,18 @@
+#img {
+    width: 150px !important;
+    height: 50px !important;
+}
+
+nav {
+    background-color: white;
+    box-shadow: 1px 4px 6px rgba(0, 0, 0, 0.2)
+}
+
+#logout {
+    padding-right: 30px;
+}
+
+.active {
+    color: #c59d33 !important;
+    font-weight: bold !important;
+}
