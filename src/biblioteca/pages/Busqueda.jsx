@@ -1,3 +1,4 @@
+import { LibrosList } from "../components/LibrosList"
 import { BiblioLayout } from "../layout/biblioLayout"
 
 
@@ -8,7 +9,16 @@ export const Busqueda = () => {
       <div className="container">
         <div className="row">
           <div className="col">
-            <input type="text" className="form-control"/>
+          <div className="input-group mb-3">
+          <input type="text" className="form-control" placeholder="Consultar" aria-describedby="basic-addon2"/>
+          <span className="input-group-text" id="basic-addon2"><i className="bi bi-search"></i></span>
+        </div>
+          </div>
+        </div>
+        <br />
+        <div className="row">
+          <div className="col">
+          <LibrosList tipo='consulta'/>
           </div>
         </div>
       </div>
