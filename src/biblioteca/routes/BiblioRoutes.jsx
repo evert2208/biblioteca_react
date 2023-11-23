@@ -5,18 +5,41 @@ import { Navbar } from '../components/Navbar'
 import { GestionLibros } from "../pages/GestionLibros"
 import { Busqueda } from "../pages/Busqueda"
 import { Footer } from "../components/Footer"
+import { useCheckAuth } from "../../hooks"
+import { CheckingAuth } from "../../ui/components/CheckingAuth"
+import { AuthRoutes } from "../../auth/routes/AuthRoutes"
 
 export const BiblioRoutes = () => {
+  const {displayName, status} = useCheckAuth();
+  if(status==='checking') {
+    return <CheckingAuth/>
+  }
   return (
     <>
      <Navbar/>
      <div>
      <Routes>
-    <Route path="/" element={<Home/>}/>
-    <Route path="/prestamos" element={<Prestamos/>}/>
-    <Route path="/gestion-de-libros" element={<GestionLibros/>}/>
-    <Route path="/consultas" element={<Busqueda/>}/>
-    <Route path="/*" element={<Navigate to="/"/>}/>
+    <Route path="/inicio" element={<Home/>}/>
+    {
+      (status==='no-authenticado')&&( 
+      <Route path="/auth/*" element={<AuthRoutes/>}/> )
+    }
+    {
+      (status==='authenticado')&&(
+      <>
+      <Route path="/prestamos" element={<Prestamos/>}/>
+      </>
+      )
+    }
+    
+    {
+      (displayName==='Admin' && status==='authenticado')&&( <Route path="/gestion-de-libros" element={<GestionLibros/>}/>)
+    }
+    {
+      (status==='authenticado')&&(<Route path="/consultas" element={<Busqueda/>}/>)
+    }
+    
+    <Route path="/*" element={<Navigate to="/inicio"/>}/>
    </Routes>
    <Footer/>
      </div>

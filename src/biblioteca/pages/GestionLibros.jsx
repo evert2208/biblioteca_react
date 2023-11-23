@@ -1,21 +1,43 @@
 import { BiblioLayout } from "../layout/biblioLayout"
+import {useSelector, useDispatch} from 'react-redux'
 import '../css/GesionLibros.css'
 import { useState } from "react";
 import { ModalLibros } from "../components/ModalLibros";
 import { ModalEliminarLibro } from "../components/ModalEliminarLibro";
-import { Alerta } from "../components/Alerta";
+import { startNewLibro } from "../../store/biblioteca/thunks";
+import { setActivoLibro } from "../../store/biblioteca/biblioSlice";
+import { ModalAgregarLibros } from "../components/ModalAgregarLibros";
+
 
 export const GestionLibros = () => {
-
+  const dispatch= useDispatch();
+  const {Libros=[]}=useSelector(state=>state.biblio);
+  
+ 
+  // console.log(Libros);
   var title='';
-  const [showModal, setShowModal] = useState(false,'');
+  const [libro, setLibro] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [showModalAgregar, setShowModalAgregar] = useState(false);
   const [showModalEliminar, setShowModalEliminar] = useState(false);
 
+  const onClickNewLibro = ()=> {
+    // dispatch(startNewLibro());
+  }
 
-  const handleOpenModal = (titulo='') => {
-    title=titulo;
-    // console.log(title);
-    setShowModal(true,titulo);
+  const onClickLibro = ({descripcion, titulo, autor, disponibilidad,id})=> {
+    dispatch(setActivoLibro({descripcion, titulo, autor, disponibilidad, id}));
+    // console.log({descripcion, titulo, autor, disponibilidad})
+}
+
+  const handleOpenModal = (libro) => {
+    setLibro(libro)
+    setShowModal(true);
+  };
+
+  const handleOpenModalAgregar = () => {
+    
+    setShowModalAgregar(true);
   };
 
   const handleOpenModalEliminar = () => {
@@ -24,6 +46,9 @@ export const GestionLibros = () => {
 
   const handleCloseModal = () => {
     setShowModal(false);
+  };
+  const handleCloseModalAgregar = () => {
+    setShowModalAgregar(false);
   };
   const handleCloseModalEliminar = () => {
     setShowModalEliminar(false);
@@ -40,7 +65,8 @@ export const GestionLibros = () => {
 </div>
   <div className="col">
       <ModalEliminarLibro show={showModalEliminar} handleClose={handleCloseModalEliminar}/>
-      <ModalLibros show={showModal} handleClose={handleCloseModal} titulo={title}/>
+      <ModalLibros show={showModal} handleClose={handleCloseModal} libro={libro}/>
+      <ModalAgregarLibros show={showModalAgregar} handleClose={handleCloseModalAgregar}/>
   </div>
       </div>
       <div className="container">
@@ -55,37 +81,33 @@ export const GestionLibros = () => {
         </div>
                 </div>
                 <div className="col" id="agregar">
-                  <button className="btn btn-secondary" onClick={()=>handleOpenModal('Agregar Libro')} >Agregar libro</button>
+                  <button className="btn btn-secondary" onClick={()=>{handleOpenModalAgregar();onClickNewLibro()}} >Agregar libro</button>
                 </div>
               </div>
             <table className="table table-responsive">
       <thead>
     <tr>
-      <th scope="col">Imagen</th>
-      <th scope="col">Nombre</th>
+      <th scope="col">Titulo</th>
+      <th scope="col">Autor</th>
       <th scope="col">Descripcion</th>
       <th scope="col">Accion</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td><a id="accion" onClick={()=>handleOpenModal('Editar Libro')}><i className="bi bi-pencil-square"></i></a>
-      <a id="accion" onClick={()=>handleOpenModalEliminar()}><i className="bi bi-trash3-fill"></i></a></td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td >Larry the Bird</td>
-      <td>@twitter</td>
-    </tr>
+
+    {
+      Libros.map(libro => (
+        <tr key={libro.id}>
+        <th scope="row">{libro.titulo}</th>
+        <td>{libro.autor}</td>
+        <td>{libro.descripcion}</td>
+        <td><a id="accion" onClick={()=>{handleOpenModal(libro); onClickLibro(libro)}}><i className="bi bi-pencil-square"></i></a>
+        <a id="accion" onClick={()=>{handleOpenModalEliminar();  onClickLibro(libro)}}><i className="bi bi-trash3-fill"></i></a></td>
+      </tr>
+      ))
+    }
+  
+  
   </tbody>
 </table>
        

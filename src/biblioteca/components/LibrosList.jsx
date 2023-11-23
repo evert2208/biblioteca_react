@@ -1,32 +1,38 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { LibroCard } from './LibroCard';
+import {useDispatch, useSelector} from 'react-redux';
+import { startLoadingLibro } from '../../store/biblioteca';
+
 
 export const LibrosList = ({tipo}) => {
+  const dispatch = useDispatch();
+  const {Libros=[], Prestados=[]}=useSelector(state=>state.biblio);
+  useEffect(()=> {
+    dispatch(startLoadingLibro());
+  },[Prestados])
+  // console.log(Libros, Prestados);
+  
   return (
-    <div className="accordion" id="accordionExample">
-    <div className="accordion-item">
-      <h2 className="accordion-header">
-        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          Titulo
-        </button>
-      </h2>
-      <div id="collapseOne" className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
-        <div className="accordion-body">
-          <div className="row">
-            
-          <div className="col-2">Image</div>
-          <div className="col">Descripcion</div>
-          </div>
-          <br />
-          {
-            (tipo==='prestamo') && (<button className="btn btn-primary">Devolver</button>)
-          }
-          {
-            (tipo==='disponible') && (<button className="btn btn-primary">Prestar</button>)
-          }
-          
-        </div>
-      </div>
-    </div>
-  </div>
+
+  <>
+  <div className="row rows-cols-1 row-cols-md-2 g-3">
+  
+  {
+    (tipo==='disponible')&&(
+      Libros.filter(x=>x.disponibilidad===true).map(libro => (
+        <LibroCard key={libro.id} {...libro} tipo={tipo}/>
+      ))
+    )
+    
+  }
+  {
+    (tipo==='prestamo')&&(
+      Prestados.map( prestado => (
+        <LibroCard key={prestado.id} {...prestado} tipo={tipo}/>
+      ))
+    )
+  }
+</div>
+</>
   )
 }

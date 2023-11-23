@@ -3,21 +3,25 @@ import { useEffect } from "react"
 import { onAuthStateChanged } from "firebase/auth"
 import { firebaseAuth } from "../firebase/config"
 import { login, logout } from "../store/auth/authSlice"
+import { startLoadingLibro, startLoadingPrestado } from "../store/biblioteca/thunks"
 
 
 export const useCheckAuth = () => {
-    const { status } = useSelector(state => state.auth);
+    const { status, displayName } = useSelector(state => state.auth);
     const dispatch = useDispatch();
 
     useEffect(() => {
         onAuthStateChanged(firebaseAuth, async(user) => {
             if (!user) return dispatch(logout());
-            const { uid, email, displayName, photoURL } = user;
-            dispatch(login({ uid, email, displayName, photoURL }))
+            const { uid, email, displayName } = user;
+            dispatch(login({ uid, email, displayName }));
+            dispatch(startLoadingLibro());
+            dispatch(startLoadingPrestado());
         })
     }, []);
 
     return {
-        status
+        status,
+        displayName
     }
 }

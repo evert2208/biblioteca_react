@@ -16,3 +16,7 @@ nav {
     color: #c59d33 !important;
     font-weight: bold !important;
 }
+
+.cursor {
+    cursor: pointer;
+}
